@@ -1,0 +1,2552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Numerical Methods Calculator Suite</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        :root {
+            --primary: #2e7d32;
+            --secondary: #1b5e20;
+            --accent: #ff6f00;
+            --light: #f1f8e9;
+            --dark: #1b5e20;
+            --success: #388e3c;
+            --warning: #f57c00;
+            --info: #0288d1;
+            --border-radius: 10px;
+            --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #e8f5e9, #c8e6c9, #a5d6a7);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            color: var(--dark);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        header p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            color: #2e7d32;
+            font-weight: 500;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .category-card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .category-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .category-card h2 {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--dark);
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .category-card h2 i {
+            color: var(--primary);
+            font-size: 1.8rem;
+        }
+
+        .methods-list {
+            list-style: none;
+        }
+
+        .methods-list li {
+            margin-bottom: 12px;
+            padding: 12px 15px;
+            background: rgba(46, 125, 50, 0.1);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--dark);
+            font-weight: 500;
+        }
+
+        .methods-list li:hover {
+            background: rgba(46, 125, 50, 0.2);
+            transform: translateX(5px);
+        }
+
+        .methods-list li i {
+            color: var(--success);
+        }
+
+        .calculator-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: var(--border-radius);
+            padding: 30px;
+            box-shadow: var(--box-shadow);
+            margin-top: 20px;
+        }
+
+        .calculator-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .calculator-header h2 {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: var(--dark);
+        }
+
+        .calculator-header h2 i {
+            color: var(--primary);
+        }
+
+        .close-calculator {
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .close-calculator:hover {
+            transform: rotate(90deg);
+            background: #e65100;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .input-group input, 
+        .input-group select, 
+        .input-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 6px;
+            border: 1px solid #bdbdbd;
+            background: white;
+            color: #333;
+            font-size: 1rem;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .input-group input:focus, 
+        .input-group select:focus, 
+        .input-group textarea:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.2);
+        }
+
+        .input-group textarea {
+            min-height: 100px;
+            resize: vertical;
+            font-family: monospace;
+        }
+
+        .matrix-input {
+            display: grid;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .matrix-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .matrix-input input {
+            text-align: center;
+            flex: 1;
+        }
+
+        .matrix-separator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            padding: 0 10px;
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-calculate {
+            background: var(--success);
+        }
+
+        .btn-calculate:hover {
+            background: #2e7d32;
+        }
+
+        .btn-reset {
+            background: var(--warning);
+        }
+
+        .btn-reset:hover {
+            background: #ef6c00;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .results-container {
+            margin-top: 30px;
+            display: none;
+        }
+
+        .results {
+            padding: 20px;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            margin-bottom: 20px;
+        }
+
+        .results h3 {
+            margin-bottom: 15px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 10px;
+        }
+
+        .results-content {
+            font-family: monospace;
+            white-space: pre-wrap;
+            line-height: 1.6;
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .graph-container {
+            background: white;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            margin-top: 20px;
+        }
+
+        .graph-container h3 {
+            margin-bottom: 15px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 10px;
+        }
+
+        .chart-container {
+            height: 400px;
+            position: relative;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #2e7d32;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .matrix-row {
+                flex-wrap: wrap;
+            }
+        }
+
+        .math-formula {
+            background-color: #f5f5f5;
+            border-left: 4px solid var(--primary);
+            padding: 10px 15px;
+            margin: 15px 0;
+            font-family: 'Cambria', serif;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-calculator"></i> Numerical Methods Calculator Suite</h1>
+            <p>Comprehensive collection of numerical methods calculators with step-by-step solutions for engineering and mathematics.</p>
+        </header>
+
+        <div class="dashboard">
+            <!-- Root Finding -->
+            <div class="category-card">
+                <h2><i class="fas fa-chart-line"></i> Root Finding</h2>
+                <ul class="methods-list">
+                    <li onclick="showCalculator('newton-raphson')"><i class="fas fa-calculator"></i> Newton Raphson Method</li>
+                </ul>
+            </div>
+
+            <!-- Linear Systems -->
+            <div class="category-card">
+                <h2><i class="fas fa-project-diagram"></i> Linear Systems</h2>
+                <ul class="methods-list">
+                    <li onclick="showCalculator('gauss-elimination')"><i class="fas fa-calculator"></i> Gauss Elimination</li>
+                    <li onclick="showCalculator('gauss-jordan')"><i class="fas fa-calculator"></i> Gauss Jordan</li>
+                    <li onclick="showCalculator('gauss-seidel')"><i class="fas fa-calculator"></i> Gauss Seidel</li>
+                </ul>
+            </div>
+
+            <!-- Interpolation -->
+            <div class="category-card">
+                <h2><i class="fas fa-bezier-curve"></i> Interpolation</h2>
+                <ul class="methods-list">
+                    <li onclick="showCalculator('lagrange')"><i class="fas fa-calculator"></i> Lagrange's Interpolation</li>
+                    <li onclick="showCalculator('newton-divided')"><i class="fas fa-calculator"></i> Newton's Divided Difference</li>
+                </ul>
+            </div>
+
+            <!-- Numerical Integration -->
+            <div class="category-card">
+                <h2><i class="fas fa-integral"></i> Numerical Integration</h2>
+                <ul class="methods-list">
+                    <li onclick="showCalculator('trapezoidal')"><i class="fas fa-calculator"></i> Trapezoidal Rule</li>
+                    <li onclick="showCalculator('simpsons')"><i class="fas fa-calculator"></i> Simpson's 1/3 Rule</li>
+                </ul>
+            </div>
+
+            <!-- Differential Equations -->
+            <div class="category-card">
+                <h2><i class="fas fa-infinity"></i> Differential Equations</h2>
+                <ul class="methods-list">
+                    <li onclick="showCalculator('euler')"><i class="fas fa-calculator"></i> Euler's Method</li>
+                    <li onclick="showCalculator('runge-kutta')"><i class="fas fa-calculator"></i> Runge-Kutta 4th Order</li>
+                </ul>
+            </div>
+
+            <!-- Eigenvalues -->
+            <div class="category-card">
+                <h2><i class="fas fa-vector-square"></i> Eigenvalues</h2>
+                <ul class="methods-list">
+                    <li onclick="showCalculator('power-method')"><i class="fas fa-calculator"></i> Power Method</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Calculator Containers -->
+        <div id="calculator-container" class="hidden">
+            <!-- Newton Raphson Calculator -->
+            <div id="newton-raphson" class="calculator-container hidden">
+                <div class="calculator-header">
+                    <h2><i class="fas fa-bullseye"></i> Newton Raphson Method</h2>
+                    <button class="close-calculator" onclick="hideCalculators()"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="input-group">
+                    <label for="nr-function">Function f(x):</label>
+                    <input type="text" id="nr-function" placeholder="e.g., x^3 - 2*x - 5" value="x^3 - 2*x - 5">
+                </div>
+                <div class="input-group">
+                    <label for="nr-derivative">Derivative f'(x):</label>
+                    <input type="text" id="nr-derivative" placeholder="e.g., 3*x^2 - 2" value="3*x^2 - 2">
+                </div>
+                <div class="input-group">
+                    <label for="nr-initial">Initial Guess:</label>
+                    <input type="number" id="nr-initial" value="2" step="0.1">
+                </div>
+                <div class="input-group">
+                    <label for="nr-tolerance">Tolerance:</label>
+                    <input type="number" id="nr-tolerance" value="0.0001" step="0.0001">
+                </div>
+                <div class="input-group">
+                    <label for="nr-max-iter">Max Iterations:</label>
+                    <input type="number" id="nr-max-iter" value="20">
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-calculate" onclick="calculateNewtonRaphson()"><i class="fas fa-calculator"></i> Calculate</button>
+                    <button class="btn btn-reset" onclick="resetNewtonRaphson()"><i class="fas fa-redo"></i> Reset</button>
+                </div>
+                <div class="results-container" id="nr-results-container">
+                    <div class="results" id="nr-results">
+                        <h3><i class="fas fa-list-ol"></i> Iteration Steps</h3>
+                        <div class="results-content" id="nr-results-content"></div>
+                    </div>
+                    <div class="graph-container">
+                        <h3><i class="fas fa-chart-line"></i> Function Visualization</h3>
+                        <div class="chart-container">
+                            <canvas id="nr-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gauss Elimination Calculator -->
+            <div id="gauss-elimination" class="calculator-container hidden">
+                <div class="calculator-header">
+                    <h2><i class="fas fa-th"></i> Gauss Elimination</h2>
+                    <button class="close-calculator" onclick="hideCalculators()"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="input-group">
+                    <label>Matrix Size:</label>
+                    <select id="ge-size" onchange="createMatrixInput('ge')">
+                        <option value="2">2x2</option>
+                        <option value="3" selected>3x3</option>
+                        <option value="4">4x4</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Augmented Matrix [A|B]:</label>
+                    <div id="ge-matrix-container" class="matrix-input">
+                        <!-- Matrix inputs will be generated here -->
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-calculate" onclick="calculateGaussElimination()"><i class="fas fa-calculator"></i> Calculate</button>
+                    <button class="btn btn-reset" onclick="resetGaussElimination()"><i class="fas fa-redo"></i> Reset</button>
+                </div>
+                <div class="results-container" id="ge-results-container">
+                    <div class="results" id="ge-results">
+                        <h3><i class="fas fa-list-ol"></i> Solution Steps</h3>
+                        <div class="results-content" id="ge-results-content"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gauss Jordan Calculator -->
+            <div id="gauss-jordan" class="calculator-container hidden">
+                <div class="calculator-header">
+                    <h2><i class="fas fa-th"></i> Gauss Jordan Method</h2>
+                    <button class="close-calculator" onclick="hideCalculators()"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="input-group">
+                    <label>Matrix Size:</label>
+                    <select id="gj-size" onchange="createMatrixInput('gj')">
+                        <option value="2">2x2</option>
+                        <option value="3" selected>3x3</option>
+                        <option value="4">4x4</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Augmented Matrix [A|B]:</label>
+                    <div id="gj-matrix-container" class="matrix-input">
+                        <!-- Matrix inputs will be generated here -->
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-calculate" onclick="calculateGaussJordan()"><i class="fas fa-calculator"></i> Calculate</button>
+                    <button class="btn btn-reset" onclick="resetGaussJordan()"><i class="fas fa-redo"></i> Reset</button>
+                </div>
+                <div class="results-container" id="gj-results-container">
+                    <div class="results" id="gj-results">
+                        <h3><i class="fas fa-list-ol"></i> Solution Steps</h3>
+                        <div class="results-content" id="gj-results-content"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gauss Seidel Calculator -->
+            <div id="gauss-seidel" class="calculator-container hidden">
+                <div class="calculator-header">
+                    <h2><i class="fas fa-th"></i> Gauss Seidel Method</h2>
+                    <button class="close-calculator" onclick="hideCalculators()"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="input-group">
+                    <label>Matrix Size:</label>
+                    <select id="gs-size" onchange="createMatrixInput('gs')">
+                        <option value="2">2x2</option>
+                        <option value="3" selected>3x3</option>
+                        <option value="4">4x4</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Augmented Matrix [A|B]:</label>
+                    <div id="gs-matrix-container" class="matrix-input">
+                        <!-- Matrix inputs will be generated here -->
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label for="gs-initial">Initial Guess (comma separated):</label>
+                    <input type="text" id="gs-initial" value="0,0,0">
+                </div>
+                <div class="input-group">
+                    <label for="gs-tolerance">Tolerance:</label>
+                    <input type="number" id="gs-tolerance" value="0.0001" step="0.0001">
+                </div>
+                <div class="input-group">
+                    <label for="gs-max-iter">Max Iterations:</label>
+                    <input type="number" id="gs-max-iter" value="20">
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-calculate" onclick="calculateGaussSeidel()"><i class="fas fa-calculator"></i> Calculate</button>
+                    <button class="btn btn-reset" onclick="resetGaussSeidel()"><i class="fas fa-redo"></i> Reset</button>
+                </div>
+                <div class="results-container" id="gs-results-container">
+                    <div class="results" id="gs-results">
+                        <h3><i class="fas fa-list-ol"></i> Iteration Steps</h3>
+                        <div class="results-content" id="gs-results-content"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lagrange's Interpolation Calculator -->
+            <div id="lagrange" class="calculator-container hidden">
+                <div class="calculator-header">
+                    <h2><i class="fas fa-project-diagram"></i> Lagrange's Interpolation</h2>
+                    <button class="close-calculator" onclick="hideCalculators()"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="input-group">
+                    <label for="lag-points">Data Points (x,y):</label>
+                    <textarea id="lag-points" placeholder="Enter points as (x,y) pairs separated by commas. Example: (1,2), (3,4), (5,6)">(1,2), (3,4), (5,6)</textarea>
+                </div>
+                <div class="input-group">
+                    <label for="lag-x">Value to Interpolate (x):</label>
+                    <input type="number" id="lag-x" value="2" step="0.1">
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-calculate" onclick="calculateLagrange()"><i class="fas fa-calculator"></i> Calculate</button>
+                    <button class="btn btn-reset" onclick="resetLagrange()"><i class="fas fa-redo"></i> Reset</button>
+                </div>
+                <div class="results-container" id="lag-results-container">
+                    <div class="results" id="lag-results">
+                        <h3><i class="fas fa-list-ol"></i> Calculation Steps</h3>
+                        <div class="results-content" id="lag-results-content"></div>
+                    </div>
+                    <div class="graph-container">
+                        <h3><i class="fas fa-chart-line"></i> Interpolation Visualization</h3>
+                        <div class="chart-container">
+                            <canvas id="lag-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Newton's Divided Difference Calculator -->
+            <div id="newton-divided" class="calculator-container hidden">
+                <div class="calculator-header">
+                    <h2><i class="fas fa-project-diagram"></i> Newton's Divided Difference</h2>
+                    <button class="close-calculator" onclick="hideCalculators()"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="input-group">
+                    <label for="ndd-points">Data Points (x,y):</label>
+                    <textarea id="ndd-points" placeholder="Enter points as (x,y) pairs separated by commas. Example: (1,2), (3,4), (5,6)">(1,2), (3,4), (5,6)</textarea>
+                </div>
+                <div class="input-group">
+                    <label for="ndd-x">Value to Interpolate (x):</label>
+                    <input type="number" id="ndd-x" value="2" step="0.1">
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-calculate" onclick="calculateNewtonDivided()"><i class="fas fa-calculator"></i> Calculate</button>
+                    <button class="btn btn-reset" onclick="resetNewtonDivided()"><i class="fas fa-redo"></i> Reset</button>
+                </div>
+                <div class="results-container" id="ndd-results-container">
+                    <div class="results" id="ndd-results">
+                        <h3><i class="fas fa-list-ol"></i> Calculation Steps</h3>
+                        <div class="results-content" id="ndd-results-content"></div>
+                    </div>
+                    <div class="graph-container">
+                        <h3><i class="fas fa-chart-line"></i> Interpolation Visualization</h3>
+                        <div class="chart-container">
+                            <canvas id="ndd-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Trapezoidal Rule Calculator -->
+            <div id="trapezoidal" class="calculator-container hidden">
+                <div class="calculator-header">
+                    <h2><i class="fas fa-integral"></i> Trapezoidal Rule</h2>
+                    <button class="close-calculator" onclick="hideCalculators()"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="input-group">
+                    <label for="trap-function">Function f(x):</label>
+                    <input type="text" id="trap-function" placeholder="e.g., Math.sin(x)" value="Math.sin(x)">
+                </div>
+                <div class="input-group">
+                    <label for="trap-lower">Lower Limit (a):</label>
+                    <input type="number" id="trap-lower" value="0" step="0.1">
+                </div>
+                <div class="input-group">
+                    <label for="trap-upper">Upper Limit (b):</label>
+                    <input type="number" id="trap-upper" value="3.1416" step="0.1">
+                </div>
+                <div class="input-group">
+                    <label for="trap-intervals">Number of Intervals:</label>
+                    <input type="number" id="trap-intervals" value="6" min="1">
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-calculate" onclick="calculateTrapezoidal()"><i class="fas fa-calculator"></i> Calculate</button>
+                    <button class="btn btn-reset" onclick="resetTrapezoidal()"><i class="fas fa-redo"></i> Reset</button>
+                </div>
+                <div class="results-container" id="trap-results-container">
+                    <div class="results" id="trap-results">
+                        <h3><i class="fas fa-list-ol"></i> Calculation Steps</h3>
+                        <div class="results-content" id="trap-results-content"></div>
+                    </div>
+                    <div class="graph-container">
+                        <h3><i class="fas fa-chart-area"></i> Integration Visualization</h3>
+                        <div class="chart-container">
+                            <canvas id="trap-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Simpson's 1/3 Rule Calculator -->
+            <div id="simpsons" class="calculator-container hidden">
+                <div class="calculator-header">
+                    <h2><i class="fas fa-integral"></i> Simpson's 1/3 Rule</h2>
+                    <button class="close-calculator" onclick="hideCalculators()"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="input-group">
+                    <label for="simp-function">Function f(x):</label>
+                    <input type="text" id="simp-function" placeholder="e.g., Math.sin(x)" value="Math.sin(x)">
+                </div>
+                <div class="input-group">
+                    <label for="simp-lower">Lower Limit (a):</label>
+                    <input type="number" id="simp-lower" value="0" step="0.1">
+                </div>
+                <div class="input-group">
+                    <label for="simp-upper">Upper Limit (b):</label>
+                    <input type="number" id="simp-upper" value="3.1416" step="0.1">
+                </div>
+                <div class="input-group">
+                    <label for="simp-intervals">Number of Intervals (even):</label>
+                    <input type="number" id="simp-intervals" value="6" min="2" step="2">
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-calculate" onclick="calculateSimpsons()"><i class="fas fa-calculator"></i> Calculate</button>
+                    <button class="btn btn-reset" onclick="resetSimpsons()"><i class="fas fa-redo"></i> Reset</button>
+                </div>
+                <div class="results-container" id="simp-results-container">
+                    <div class="results" id="simp-results">
+                        <h3><i class="fas fa-list-ol"></i> Calculation Steps</h3>
+                        <div class="results-content" id="simp-results-content"></div>
+                    </div>
+                    <div class="graph-container">
+                        <h3><i class="fas fa-chart-area"></i> Integration Visualization</h3>
+                        <div class="chart-container">
+                            <canvas id="simp-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Euler's Method Calculator -->
+            <div id="euler" class="calculator-container hidden">
+                <div class="calculator-header">
+                    <h2><i class="fas fa-infinity"></i> Euler's Method</h2>
+                    <button class="close-calculator" onclick="hideCalculators()"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="input-group">
+                    <label for="euler-function">Differential Equation dy/dx = f(x,y):</label>
+                    <input type="text" id="euler-function" placeholder="e.g., x + y" value="x + y">
+                </div>
+                <div class="input-group">
+                    <label for="euler-initial-x">Initial x:</label>
+                    <input type="number" id="euler-initial-x" value="0" step="0.1">
+                </div>
+                <div class="input-group">
+                    <label for="euler-initial-y">Initial y:</label>
+                    <input type="number" id="euler-initial-y" value="1" step="0.1">
+                </div>
+                <div class="input-group">
+                    <label for="euler-step">Step Size (h):</label>
+                    <input type="number" id="euler-step" value="0.1" step="0.01">
+                </div>
+                <div class="input-group">
+                    <label for="euler-target">Target x:</label>
+                    <input type="number" id="euler-target" value="0.5" step="0.1">
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-calculate" onclick="calculateEuler()"><i class="fas fa-calculator"></i> Calculate</button>
+                    <button class="btn btn-reset" onclick="resetEuler()"><i class="fas fa-redo"></i> Reset</button>
+                </div>
+                <div class="results-container" id="euler-results-container">
+                    <div class="results" id="euler-results">
+                        <h3><i class="fas fa-list-ol"></i> Calculation Steps</h3>
+                        <div class="results-content" id="euler-results-content"></div>
+                    </div>
+                    <div class="graph-container">
+                        <h3><i class="fas fa-chart-line"></i> Solution Visualization</h3>
+                        <div class="chart-container">
+                            <canvas id="euler-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Runge-Kutta 4th Order Calculator -->
+            <div id="runge-kutta" class="calculator-container hidden">
+                <div class="calculator-header">
+                    <h2><i class="fas fa-infinity"></i> Runge-Kutta 4th Order</h2>
+                    <button class="close-calculator" onclick="hideCalculators()"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="input-group">
+                    <label for="rk-function">Differential Equation dy/dx = f(x,y):</label>
+                    <input type="text" id="rk-function" placeholder="e.g., x + y" value="x + y">
+                </div>
+                <div class="input-group">
+                    <label for="rk-initial-x">Initial x:</label>
+                    <input type="number" id="rk-initial-x" value="0" step="0.1">
+                </div>
+                <div class="input-group">
+                    <label for="rk-initial-y">Initial y:</label>
+                    <input type="number" id="rk-initial-y" value="1" step="0.1">
+                </div>
+                <div class="input-group">
+                    <label for="rk-step">Step Size (h):</label>
+                    <input type="number" id="rk-step" value="0.1" step="0.01">
+                </div>
+                <div class="input-group">
+                    <label for="rk-target">Target x:</label>
+                    <input type="number" id="rk-target" value="0.5" step="0.1">
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-calculate" onclick="calculateRungeKutta()"><i class="fas fa-calculator"></i> Calculate</button>
+                    <button class="btn btn-reset" onclick="resetRungeKutta()"><i class="fas fa-redo"></i> Reset</button>
+                </div>
+                <div class="results-container" id="rk-results-container">
+                    <div class="results" id="rk-results">
+                        <h3><i class="fas fa-list-ol"></i> Calculation Steps</h3>
+                        <div class="results-content" id="rk-results-content"></div>
+                    </div>
+                    <div class="graph-container">
+                        <h3><i class="fas fa-chart-line"></i> Solution Visualization</h3>
+                        <div class="chart-container">
+                            <canvas id="rk-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Power Method Calculator -->
+            <div id="power-method" class="calculator-container hidden">
+                <div class="calculator-header">
+                    <h2><i class="fas fa-vector-square"></i> Power Method</h2>
+                    <button class="close-calculator" onclick="hideCalculators()"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="input-group">
+                    <label>Matrix Size:</label>
+                    <select id="pm-size" onchange="createMatrixInput('pm')">
+                        <option value="2">2x2</option>
+                        <option value="3" selected>3x3</option>
+                        <option value="4">4x4</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Matrix A:</label>
+                    <div id="pm-matrix-container" class="matrix-input">
+                        <!-- Matrix inputs will be generated here -->
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label for="pm-initial">Initial Vector (comma separated):</label>
+                    <input type="text" id="pm-initial" value="1,1,1">
+                </div>
+                <div class="input-group">
+                    <label for="pm-tolerance">Tolerance:</label>
+                    <input type="number" id="pm-tolerance" value="0.0001" step="0.0001">
+                </div>
+                <div class="input-group">
+                    <label for="pm-max-iter">Max Iterations:</label>
+                    <input type="number" id="pm-max-iter" value="20">
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-calculate" onclick="calculatePowerMethod()"><i class="fas fa-calculator"></i> Calculate</button>
+                    <button class="btn btn-reset" onclick="resetPowerMethod()"><i class="fas fa-redo"></i> Reset</button>
+                </div>
+                <div class="results-container" id="pm-results-container">
+                    <div class="results" id="pm-results">
+                        <h3><i class="fas fa-list-ol"></i> Iteration Steps</h3>
+                        <div class="results-content" id="pm-results-content"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Numerical Methods Calculator Suite | Created for Engineering Mathematics | © 2023</p>
+        </div>
+    </div>
+
+    <script>
+        // Global chart references
+        let nrChart, lagChart, nddChart, trapChart, simpChart, eulerChart, rkChart;
+        
+        // Show selected calculator
+        function showCalculator(methodId) {
+            document.getElementById('calculator-container').classList.remove('hidden');
+            document.querySelectorAll('.calculator-container').forEach(el => {
+                el.classList.add('hidden');
+            });
+            document.getElementById(methodId).classList.remove('hidden');
+            window.scrollTo({ top: document.getElementById('calculator-container').offsetTop, behavior: 'smooth' });
+            
+            // Initialize matrix input if needed
+            if (methodId === 'gauss-seidel' || methodId === 'gauss-elimination' || methodId === 'gauss-jordan' || methodId === 'power-method') {
+                createMatrixInput(methodId.substring(0,2));
+            }
+        }
+
+        // Hide all calculators
+        function hideCalculators() {
+            document.getElementById('calculator-container').classList.add('hidden');
+        }
+
+        // Create matrix input fields
+        function createMatrixInput(prefix) {
+            const size = parseInt(document.getElementById(`${prefix}-size`).value);
+            const container = document.getElementById(`${prefix}-matrix-container`);
+            container.innerHTML = '';
+            
+            // Create matrix grid
+            for (let i = 0; i < size; i++) {
+                const row = document.createElement('div');
+                row.className = 'matrix-row';
+                
+                for (let j = 0; j < size; j++) {
+                    const input = document.createElement('input');
+                    input.type = 'number';
+                    input.value = i === j ? '1' : '0';
+                    input.dataset.row = i;
+                    input.dataset.col = j;
+                    input.placeholder = `a${i+1}${j+1}`;
+                    row.appendChild(input);
+                }
+                
+                if (prefix !== 'pm') {
+                    // For equation systems
+                    const sep = document.createElement('div');
+                    sep.className = 'matrix-separator';
+                    sep.textContent = '|';
+                    row.appendChild(sep);
+                    
+                    const bInput = document.createElement('input');
+                    bInput.type = 'number';
+                    bInput.value = '0';
+                    bInput.dataset.row = i;
+                    bInput.dataset.col = size;
+                    bInput.placeholder = `b${i+1}`;
+                    row.appendChild(bInput);
+                }
+                
+                container.appendChild(row);
+            }
+        }
+
+        // Newton Raphson Calculation with graph
+        function calculateNewtonRaphson() {
+            const funcStr = document.getElementById('nr-function').value;
+            const derivStr = document.getElementById('nr-derivative').value;
+            const initial = parseFloat(document.getElementById('nr-initial').value);
+            const tolerance = parseFloat(document.getElementById('nr-tolerance').value);
+            const maxIter = parseInt(document.getElementById('nr-max-iter').value);
+            
+            // Create functions from strings
+            const func = x => eval(funcStr.replace(/x/g, `(${x})`));
+            const deriv = x => eval(derivStr.replace(/x/g, `(${x})`));
+            
+            let x = initial;
+            let iter = 0;
+            let error = 1;
+            let results = "Newton-Raphson Method:\n";
+            results += "Formula: x_{n+1} = x_n - f(x_n)/f'(x_n)\n\n";
+            results += "Iteration\tx\t\tf(x)\t\tf'(x)\t\tError\n";
+            results += "--------------------------------------------------------------\n";
+            
+            // Store points for the graph
+            const points = [];
+            
+            while (error > tolerance && iter < maxIter) {
+                const f_x = func(x);
+                const f_prime_x = deriv(x);
+                
+                // Avoid division by zero
+                if (Math.abs(f_prime_x) < 1e-10) {
+                    results += "Derivative is zero. Method failed.";
+                    break;
+                }
+                
+                const x_new = x - f_x / f_prime_x;
+                error = Math.abs(x_new - x);
+                
+                results += `${iter+1}\t\t${x.toFixed(6)}\t${f_x.toFixed(6)}\t${f_prime_x.toFixed(6)}\t${error.toFixed(6)}\n`;
+                
+                // Store point for graph
+                points.push({x, f_x});
+                
+                x = x_new;
+                iter++;
+            }
+            
+            results += "\nRoot found: " + x.toFixed(6);
+            document.getElementById('nr-results-content').textContent = results;
+            document.getElementById('nr-results-container').style.display = 'block';
+            
+            // Draw graph
+            drawNewtonRaphsonChart(func, points, x);
+        }
+
+        function resetNewtonRaphson() {
+            document.getElementById('nr-function').value = "x^3 - 2*x - 5";
+            document.getElementById('nr-derivative').value = "3*x^2 - 2";
+            document.getElementById('nr-initial').value = "2";
+            document.getElementById('nr-tolerance').value = "0.0001";
+            document.getElementById('nr-max-iter').value = "20";
+            document.getElementById('nr-results-container').style.display = 'none';
+        }
+
+        // Draw Newton Raphson chart
+        function drawNewtonRaphsonChart(func, points, root) {
+            const ctx = document.getElementById('nr-chart').getContext('2d');
+            
+            // Generate data for function curve
+            const xValues = [];
+            const yValues = [];
+            const minX = Math.min(root - 3, ...points.map(p => p.x));
+            const maxX = Math.max(root + 3, ...points.map(p => p.x));
+            
+            for (let x = minX; x <= maxX; x += 0.1) {
+                xValues.push(x);
+                yValues.push(func(x));
+            }
+            
+            // Create chart
+            if (nrChart) nrChart.destroy();
+            
+            nrChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    datasets: [{
+                        label: 'f(x)',
+                        data: xValues.map((x, i) => ({x, y: yValues[i]})),
+                        borderColor: '#2e7d32',
+                        borderWidth: 2,
+                        fill: false
+                    }, {
+                        label: 'Iteration Points',
+                        data: points.map(p => ({x: p.x, y: p.f_x})),
+                        backgroundColor: '#ff6f00',
+                        borderColor: '#ff6f00',
+                        borderWidth: 2,
+                        pointRadius: 6,
+                        pointHoverRadius: 8,
+                        showLine: false
+                    }, {
+                        label: 'Root',
+                        data: [{x: root, y: 0}],
+                        backgroundColor: '#d32f2f',
+                        borderColor: '#d32f2f',
+                        borderWidth: 2,
+                        pointRadius: 8,
+                        pointHoverRadius: 10,
+                        showLine: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            position: 'bottom',
+                            title: {
+                                display: true,
+                                text: 'x',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'f(x)',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                font: {
+                                    size: 14
+                                }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                            titleFont: {
+                                size: 14
+                            },
+                            bodyFont: {
+                                size: 13
+                            },
+                            padding: 10
+                        }
+                    }
+                }
+            });
+        }
+
+        // Gauss Elimination Calculation
+        function calculateGaussElimination() {
+            const size = parseInt(document.getElementById('ge-size').value);
+            const inputs = document.querySelectorAll('#ge-matrix-container input');
+            
+            // Parse matrix
+            const A = [];
+            const B = [];
+            for (let i = 0; i < size; i++) {
+                A[i] = [];
+                for (let j = 0; j < size; j++) {
+                    A[i][j] = 0;
+                }
+                B[i] = 0;
+            }
+            
+            inputs.forEach(input => {
+                const row = parseInt(input.dataset.row);
+                const col = parseInt(input.dataset.col);
+                if (col < size) {
+                    A[row][col] = parseFloat(input.value) || 0;
+                } else {
+                    B[row] = parseFloat(input.value) || 0;
+                }
+            });
+            
+            let results = "Gauss Elimination Method:\n\n";
+            results += "Initial Augmented Matrix:\n";
+            for (let i = 0; i < size; i++) {
+                for (let j = 0; j < size; j++) {
+                    results += `${A[i][j].toFixed(2)}\t`;
+                }
+                results += `| ${B[i].toFixed(2)}\n`;
+            }
+            results += "\n";
+            
+            // Forward elimination
+            for (let pivot = 0; pivot < size - 1; pivot++) {
+                // Partial pivoting
+                let maxRow = pivot;
+                for (let row = pivot + 1; row < size; row++) {
+                    if (Math.abs(A[row][pivot]) > Math.abs(A[maxRow][pivot])) {
+                        maxRow = row;
+                    }
+                }
+                
+                if (maxRow !== pivot) {
+                    // Swap rows
+                    [A[pivot], A[maxRow]] = [A[maxRow], A[pivot]];
+                    [B[pivot], B[maxRow]] = [B[maxRow], B[pivot]];
+                    results += `Swapping row ${pivot+1} with row ${maxRow+1}:\n`;
+                }
+                
+                for (let row = pivot + 1; row < size; row++) {
+                    const factor = A[row][pivot] / A[pivot][pivot];
+                    results += `Eliminating row ${row+1} using row ${pivot+1} (factor = ${factor.toFixed(4)})\n`;
+                    
+                    for (let col = pivot; col < size; col++) {
+                        A[row][col] -= factor * A[pivot][col];
+                    }
+                    B[row] -= factor * B[pivot];
+                }
+                
+                results += "\nMatrix after elimination step:\n";
+                for (let i = 0; i < size; i++) {
+                    for (let j = 0; j < size; j++) {
+                        results += `${A[i][j].toFixed(2)}\t`;
+                    }
+                    results += `| ${B[i].toFixed(2)}\n`;
+                }
+                results += "\n";
+            }
+            
+            // Back substitution
+            const X = new Array(size);
+            for (let i = size - 1; i >= 0; i--) {
+                let sum = B[i];
+                for (let j = i + 1; j < size; j++) {
+                    sum -= A[i][j] * X[j];
+                }
+                X[i] = sum / A[i][i];
+            }
+            
+            results += "Solution by back substitution:\n";
+            for (let i = 0; i < size; i++) {
+                results += `x${i+1} = ${X[i].toFixed(6)}\n`;
+            }
+            
+            document.getElementById('ge-results-content').textContent = results;
+            document.getElementById('ge-results-container').style.display = 'block';
+        }
+
+        function resetGaussElimination() {
+            createMatrixInput('ge');
+            document.getElementById('ge-results-container').style.display = 'none';
+        }
+
+        // Gauss Jordan Calculation
+        function calculateGaussJordan() {
+            const size = parseInt(document.getElementById('gj-size').value);
+            const inputs = document.querySelectorAll('#gj-matrix-container input');
+            
+            // Parse matrix
+            const A = [];
+            const B = [];
+            for (let i = 0; i < size; i++) {
+                A[i] = [];
+                for (let j = 0; j < size; j++) {
+                    A[i][j] = 0;
+                }
+                B[i] = 0;
+            }
+            
+            inputs.forEach(input => {
+                const row = parseInt(input.dataset.row);
+                const col = parseInt(input.dataset.col);
+                if (col < size) {
+                    A[row][col] = parseFloat(input.value) || 0;
+                } else {
+                    B[row] = parseFloat(input.value) || 0;
+                }
+            });
+            
+            let results = "Gauss-Jordan Elimination Method:\n\n";
+            results += "Initial Augmented Matrix:\n";
+            for (let i = 0; i < size; i++) {
+                for (let j = 0; j < size; j++) {
+                    results += `${A[i][j].toFixed(2)}\t`;
+                }
+                results += `| ${B[i].toFixed(2)}\n`;
+            }
+            results += "\n";
+            
+            for (let pivot = 0; pivot < size; pivot++) {
+                // Make diagonal element 1
+                const pivotVal = A[pivot][pivot];
+                if (Math.abs(pivotVal) < 1e-10) {
+                    results += "Pivot is zero. Method failed.";
+                    break;
+                }
+                
+                results += `Normalizing row ${pivot+1} by dividing by ${pivotVal.toFixed(4)}\n`;
+                for (let j = pivot; j < size; j++) {
+                    A[pivot][j] /= pivotVal;
+                }
+                B[pivot] /= pivotVal;
+                
+                // Eliminate this variable from other rows
+                for (let row = 0; row < size; row++) {
+                    if (row !== pivot) {
+                        const factor = A[row][pivot];
+                        results += `Eliminating row ${row+1} using row ${pivot+1} (factor = ${factor.toFixed(4)})\n`;
+                        
+                        for (let col = pivot; col < size; col++) {
+                            A[row][col] -= factor * A[pivot][col];
+                        }
+                        B[row] -= factor * B[pivot];
+                    }
+                }
+                
+                results += "\nMatrix after step:\n";
+                for (let i = 0; i < size; i++) {
+                    for (let j = 0; j < size; j++) {
+                        results += `${A[i][j].toFixed(2)}\t`;
+                    }
+                    results += `| ${B[i].toFixed(2)}\n`;
+                }
+                results += "\n";
+            }
+            
+            results += "Solution:\n";
+            for (let i = 0; i < size; i++) {
+                results += `x${i+1} = ${B[i].toFixed(6)}\n`;
+            }
+            
+            document.getElementById('gj-results-content').textContent = results;
+            document.getElementById('gj-results-container').style.display = 'block';
+        }
+
+        function resetGaussJordan() {
+            createMatrixInput('gj');
+            document.getElementById('gj-results-container').style.display = 'none';
+        }
+
+        // Gauss Seidel Calculation
+        function calculateGaussSeidel() {
+            const size = parseInt(document.getElementById('gs-size').value);
+            const inputs = document.querySelectorAll('#gs-matrix-container input');
+            const initialVectorStr = document.getElementById('gs-initial').value;
+            const tolerance = parseFloat(document.getElementById('gs-tolerance').value);
+            const maxIter = parseInt(document.getElementById('gs-max-iter').value);
+            
+            // Parse matrix
+            const A = [];
+            const B = [];
+            for (let i = 0; i < size; i++) {
+                A[i] = [];
+                for (let j = 0; j < size; j++) {
+                    A[i][j] = 0;
+                }
+                B[i] = 0;
+            }
+            
+            inputs.forEach(input => {
+                const row = parseInt(input.dataset.row);
+                const col = parseInt(input.dataset.col);
+                if (col < size) {
+                    A[row][col] = parseFloat(input.value) || 0;
+                } else {
+                    B[row] = parseFloat(input.value) || 0;
+                }
+            });
+            
+            // Parse initial vector
+            let X = initialVectorStr.split(',').map(Number);
+            if (X.length !== size) {
+                alert(`Initial vector must have ${size} elements`);
+                return;
+            }
+            
+            let results = "Gauss-Seidel Method:\n\n";
+            results += "Initial Guess: [" + X.map(x => x.toFixed(4)).join(', ') + "]\n";
+            results += "Tolerance: " + tolerance + "\n";
+            results += "Max Iterations: " + maxIter + "\n\n";
+            
+            let converged = false;
+            let error = Infinity;
+            let iter = 0;
+            
+            while (!converged && iter < maxIter) {
+                iter++;
+                let newX = [...X];
+                let maxDiff = 0;
+                
+                results += `Iteration ${iter}:\n`;
+                
+                for (let i = 0; i < size; i++) {
+                    let sum = B[i];
+                    
+                    for (let j = 0; j < size; j++) {
+                        if (j !== i) {
+                            sum -= A[i][j] * newX[j];
+                        }
+                    }
+                    
+                    newX[i] = sum / A[i][i];
+                    const diff = Math.abs(newX[i] - X[i]);
+                    if (diff > maxDiff) maxDiff = diff;
+                    
+                    results += `  x${i+1} = (${B[i].toFixed(2)} - `;
+                    for (let j = 0; j < size; j++) {
+                        if (j !== i) {
+                            results += `${A[i][j].toFixed(2)}*${newX[j].toFixed(4)}`;
+                            if (j < size-1) results += " - ";
+                        }
+                    }
+                    results += `) / ${A[i][i].toFixed(2)} = ${newX[i].toFixed(6)}\n`;
+                }
+                
+                error = maxDiff;
+                X = [...newX];
+                
+                results += `  New Vector: [${X.map(x => x.toFixed(6)).join(', ')}]\n`;
+                results += `  Max Error: ${error.toFixed(6)}\n\n`;
+                
+                if (error < tolerance) {
+                    converged = true;
+                    results += `Converged after ${iter} iterations.\n`;
+                }
+            }
+            
+            results += `\nFinal Solution:\n`;
+            for (let i = 0; i < size; i++) {
+                results += `x${i+1} = ${X[i].toFixed(6)}\n`;
+            }
+            
+            document.getElementById('gs-results-content').textContent = results;
+            document.getElementById('gs-results-container').style.display = 'block';
+        }
+
+        function resetGaussSeidel() {
+            createMatrixInput('gs');
+            document.getElementById('gs-initial').value = "0,0,0";
+            document.getElementById('gs-tolerance').value = "0.0001";
+            document.getElementById('gs-max-iter').value = "20";
+            document.getElementById('gs-results-container').style.display = 'none';
+        }
+
+        // Lagrange's Interpolation Calculation
+        function calculateLagrange() {
+            const pointsText = document.getElementById('lag-points').value;
+            const x = parseFloat(document.getElementById('lag-x').value);
+            
+            // Parse points
+            const pointRegex = /\(([^,]+),([^)]+)\)/g;
+            let match;
+            const points = [];
+            
+            while ((match = pointRegex.exec(pointsText)) !== null) {
+                const xVal = parseFloat(match[1].trim());
+                const yVal = parseFloat(match[2].trim());
+                points.push({x: xVal, y: yVal});
+            }
+            
+            if (points.length < 2) {
+                alert("Please enter at least two points in the format (x1,y1), (x2,y2), ...");
+                return;
+            }
+            
+            const n = points.length;
+            let result = 0;
+            let calculation = "Lagrange Interpolation Formula:\n";
+            calculation += "L(x) = Σ [y_i * l_i(x)]\n";
+            calculation += `Where l_i(x) = Π_{j≠i} (x - x_j) / (x_i - x_j)\n\n`;
+            calculation += `Calculating for x = ${x}\n\n`;
+            
+            const lagrangePolynomials = [];
+            
+            for (let i = 0; i < n; i++) {
+                let term = points[i].y;
+                let poly = `l_${i}(x) = `;
+                let numerator = "";
+                let denominator = 1;
+                
+                for (let j = 0; j < n; j++) {
+                    if (i !== j) {
+                        term *= (x - points[j].x) / (points[i].x - points[j].x);
+                        poly += `(x - ${points[j].x}) / (${points[i].x} - ${points[j].x}) * `;
+                        denominator *= (points[i].x - points[j].x);
+                        numerator += `(x - ${points[j].x})`;
+                    }
+                }
+                
+                poly = poly.slice(0, -3); // Remove last " * "
+                lagrangePolynomials.push(poly);
+                
+                calculation += `Term ${i+1}: y${i} * [${poly}] = ${points[i].y} * [`;
+                
+                let prod = 1;
+                for (let j = 0; j < n; j++) {
+                    if (i !== j) {
+                        const factor = (x - points[j].x) / (points[i].x - points[j].x);
+                        calculation += `${factor.toFixed(4)}`;
+                        if (j < n-1 && i !== j) calculation += " * ";
+                        prod *= factor;
+                    }
+                }
+                
+                calculation += `] = ${points[i].y} * ${prod.toFixed(4)} = ${(points[i].y * prod).toFixed(4)}\n`;
+                result += term;
+            }
+            
+            calculation += `\nFinal Result: L(${x}) = ${result.toFixed(6)}`;
+            
+            document.getElementById('lag-results-content').textContent = calculation;
+            document.getElementById('lag-results-container').style.display = 'block';
+            
+            // Draw interpolation chart
+            drawLagrangeChart(points, x, result);
+        }
+
+        function resetLagrange() {
+            document.getElementById('lag-points').value = "(1,2), (3,4), (5,6)";
+            document.getElementById('lag-x').value = "2";
+            document.getElementById('lag-results-container').style.display = 'none';
+        }
+
+        // Draw Lagrange's Interpolation chart
+        function drawLagrangeChart(points, interpolateX, interpolateY) {
+            const ctx = document.getElementById('lag-chart').getContext('2d');
+            
+            // Generate data for interpolation curve
+            const xValues = [];
+            const yValues = [];
+            
+            // Find min and max x
+            const minX = Math.min(...points.map(p => p.x)) - 1;
+            const maxX = Math.max(...points.map(p => p.x)) + 1;
+            
+            // Generate interpolated points
+            for (let x = minX; x <= maxX; x += 0.1) {
+                let y = 0;
+                const n = points.length;
+                
+                for (let i = 0; i < n; i++) {
+                    let term = points[i].y;
+                    for (let j = 0; j < n; j++) {
+                        if (i !== j) {
+                            term *= (x - points[j].x) / (points[i].x - points[j].x);
+                        }
+                    }
+                    y += term;
+                }
+                
+                xValues.push(x);
+                yValues.push(y);
+            }
+            
+            // Create chart
+            if (lagChart) lagChart.destroy();
+            
+            lagChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    datasets: [{
+                        label: 'Interpolation Curve',
+                        data: xValues.map((x, i) => ({x, y: yValues[i]})),
+                        borderColor: '#2e7d32',
+                        borderWidth: 2,
+                        fill: false,
+                        tension: 0.4
+                    }, {
+                        label: 'Data Points',
+                        data: points.map(p => ({x: p.x, y: p.y})),
+                        backgroundColor: '#ff6f00',
+                        borderColor: '#ff6f00',
+                        borderWidth: 2,
+                        pointRadius: 6,
+                        pointHoverRadius: 8,
+                        showLine: false
+                    }, {
+                        label: 'Interpolated Point',
+                        data: [{x: interpolateX, y: interpolateY}],
+                        backgroundColor: '#d32f2f',
+                        borderColor: '#d32f2f',
+                        borderWidth: 2,
+                        pointRadius: 8,
+                        pointHoverRadius: 10,
+                        showLine: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            position: 'bottom',
+                            title: {
+                                display: true,
+                                text: 'x',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'y',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                font: {
+                                    size: 14
+                                }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                            titleFont: {
+                                size: 14
+                            },
+                            bodyFont: {
+                                size: 13
+                            },
+                            padding: 10
+                        }
+                    }
+                }
+            });
+        }
+
+        // Newton's Divided Difference Calculation
+        function calculateNewtonDivided() {
+            const pointsText = document.getElementById('ndd-points').value;
+            const x = parseFloat(document.getElementById('ndd-x').value);
+            
+            // Parse points
+            const pointRegex = /\(([^,]+),([^)]+)\)/g;
+            let match;
+            const points = [];
+            
+            while ((match = pointRegex.exec(pointsText)) !== null) {
+                const xVal = parseFloat(match[1].trim());
+                const yVal = parseFloat(match[2].trim());
+                points.push({x: xVal, y: yVal});
+            }
+            
+            if (points.length < 2) {
+                alert("Please enter at least two points in the format (x1,y1), (x2,y2), ...");
+                return;
+            }
+            
+            // Sort points by x
+            points.sort((a, b) => a.x - b.x);
+            
+            // Create divided difference table
+            const n = points.length;
+            const table = Array(n).fill().map(() => Array(n).fill(0));
+            
+            // Initialize first column with y values
+            for (let i = 0; i < n; i++) {
+                table[i][0] = points[i].y;
+            }
+            
+            let calculation = "Newton's Divided Difference Table:\n";
+            calculation += "x\t\ty\t\t1st\t\t2nd\t\t3rd\n";
+            calculation += "--------------------------------------------------\n";
+            
+            // Calculate divided differences
+            for (let j = 1; j < n; j++) {
+                for (let i = 0; i < n - j; i++) {
+                    table[i][j] = (table[i+1][j-1] - table[i][j-1]) / (points[i+j].x - points[i].x);
+                }
+            }
+            
+            // Display table
+            for (let i = 0; i < n; i++) {
+                calculation += points[i].x.toFixed(2) + "\t\t" + table[i][0].toFixed(2);
+                for (let j = 1; j < n - i; j++) {
+                    calculation += "\t\t" + table[i][j].toFixed(4);
+                }
+                calculation += "\n";
+            }
+            
+            // Calculate interpolation
+            let result = table[0][0];
+            let product = 1;
+            calculation += "\nInterpolation Formula:\n";
+            calculation += `P(x) = b0 + b1(x-x0) + b2(x-x0)(x-x1) + ...\n\n`;
+            calculation += `For x = ${x}:\n`;
+            calculation += `P(${x}) = ${result.toFixed(4)}`;
+            
+            let terms = [result.toFixed(4)];
+            
+            for (let i = 1; i < n; i++) {
+                product *= (x - points[i-1].x);
+                const term = table[0][i] * product;
+                result += term;
+                calculation += ` + (${table[0][i].toFixed(4)} * ${product.toFixed(4)})`;
+                terms.push(`${table[0][i].toFixed(4)} * ${product.toFixed(4)}`);
+            }
+            
+            calculation += `\n= ${result.toFixed(4)}\n\n`;
+            calculation += "Step-by-step calculation:\n";
+            calculation += `= ${terms.join(' + ')} = ${result.toFixed(4)}`;
+            
+            document.getElementById('ndd-results-content').textContent = calculation;
+            document.getElementById('ndd-results-container').style.display = 'block';
+            
+            // Draw interpolation chart
+            drawNewtonDividedChart(points, x, result);
+        }
+
+        function resetNewtonDivided() {
+            document.getElementById('ndd-points').value = "(1,2), (3,4), (5,6)";
+            document.getElementById('ndd-x').value = "2";
+            document.getElementById('ndd-results-container').style.display = 'none';
+        }
+
+        // Draw Newton's Divided Difference chart
+        function drawNewtonDividedChart(points, interpolateX, interpolateY) {
+            const ctx = document.getElementById('ndd-chart').getContext('2d');
+            
+            // Generate data for interpolation curve
+            const xValues = [];
+            const yValues = [];
+            
+            // Find min and max x
+            const minX = Math.min(...points.map(p => p.x)) - 1;
+            const maxX = Math.max(...points.map(p => p.x)) + 1;
+            
+            // Generate interpolated points
+            for (let x = minX; x <= maxX; x += 0.1) {
+                // Create divided difference table
+                const n = points.length;
+                const table = Array(n).fill().map(() => Array(n).fill(0));
+                
+                // Initialize first column with y values
+                for (let i = 0; i < n; i++) {
+                    table[i][0] = points[i].y;
+                }
+                
+                // Calculate divided differences
+                for (let j = 1; j < n; j++) {
+                    for (let i = 0; i < n - j; i++) {
+                        table[i][j] = (table[i+1][j-1] - table[i][j-1]) / (points[i+j].x - points[i].x);
+                    }
+                }
+                
+                // Calculate interpolation
+                let y = table[0][0];
+                let product = 1;
+                
+                for (let i = 1; i < n; i++) {
+                    product *= (x - points[i-1].x);
+                    y += table[0][i] * product;
+                }
+                
+                xValues.push(x);
+                yValues.push(y);
+            }
+            
+            // Create chart
+            if (nddChart) nddChart.destroy();
+            
+            nddChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    datasets: [{
+                        label: 'Interpolation Curve',
+                        data: xValues.map((x, i) => ({x, y: yValues[i]})),
+                        borderColor: '#2e7d32',
+                        borderWidth: 2,
+                        fill: false,
+                        tension: 0.4
+                    }, {
+                        label: 'Data Points',
+                        data: points.map(p => ({x: p.x, y: p.y})),
+                        backgroundColor: '#ff6f00',
+                        borderColor: '#ff6f00',
+                        borderWidth: 2,
+                        pointRadius: 6,
+                        pointHoverRadius: 8,
+                        showLine: false
+                    }, {
+                        label: 'Interpolated Point',
+                        data: [{x: interpolateX, y: interpolateY}],
+                        backgroundColor: '#d32f2f',
+                        borderColor: '#d32f2f',
+                        borderWidth: 2,
+                        pointRadius: 8,
+                        pointHoverRadius: 10,
+                        showLine: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            position: 'bottom',
+                            title: {
+                                display: true,
+                                text: 'x',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'y',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                font: {
+                                    size: 14
+                                }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                            titleFont: {
+                                size: 14
+                            },
+                            bodyFont: {
+                                size: 13
+                            },
+                            padding: 10
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Trapezoidal Rule Calculation
+        function calculateTrapezoidal() {
+            const funcStr = document.getElementById('trap-function').value;
+            const a = parseFloat(document.getElementById('trap-lower').value);
+            const b = parseFloat(document.getElementById('trap-upper').value);
+            const n = parseInt(document.getElementById('trap-intervals').value);
+            
+            const func = x => eval(funcStr.replace(/x/g, `(${x})`));
+            const h = (b - a) / n;
+            
+            let sum = (func(a) + func(b)) / 2;
+            let calculation = `Trapezoidal Rule:\n`;
+            calculation += `∫[${a}, ${b}] f(x) dx ≈ (h/2) [f(a) + 2Σf(x_i) + f(b)]\n\n`;
+            calculation += `h = (b - a)/n = (${b} - ${a})/${n} = ${h.toFixed(4)}\n`;
+            calculation += `f(a) = f(${a}) = ${func(a).toFixed(4)}\n`;
+            calculation += `f(b) = f(${b}) = ${func(b).toFixed(4)}\n`;
+            
+            calculation += "\nIntermediate points:\n";
+            for (let i = 1; i < n; i++) {
+                const x = a + i * h;
+                const fx = func(x);
+                sum += fx;
+                calculation += `f(x${i}) = f(${x.toFixed(4)}) = ${fx.toFixed(4)}\n`;
+            }
+            
+            const result = h * sum;
+            
+            calculation += `\nSum = (f(a) + f(b))/2 + Σf(x_i) = (${func(a).toFixed(4)} + ${func(b).toFixed(4)})/2 + ${(sum - (func(a)+func(b))/2).toFixed(4)} = ${sum.toFixed(4)}\n`;
+            calculation += `Result = h * sum = ${h.toFixed(4)} * ${sum.toFixed(4)} = ${result.toFixed(6)}`;
+            
+            document.getElementById('trap-results-content').textContent = calculation;
+            document.getElementById('trap-results-container').style.display = 'block';
+            
+            // Draw graph
+            drawTrapezoidalChart(func, a, b, n);
+        }
+
+        function resetTrapezoidal() {
+            document.getElementById('trap-function').value = "Math.sin(x)";
+            document.getElementById('trap-lower').value = "0";
+            document.getElementById('trap-upper').value = "3.1416";
+            document.getElementById('trap-intervals').value = "6";
+            document.getElementById('trap-results-container').style.display = 'none';
+        }
+
+        // Draw Trapezoidal Rule chart
+        function drawTrapezoidalChart(func, a, b, n) {
+            const ctx = document.getElementById('trap-chart').getContext('2d');
+            const h = (b - a) / n;
+            
+            // Generate data points
+            const xValues = [];
+            const yValues = [];
+            const trapezoids = [];
+            
+            for (let i = 0; i <= n; i++) {
+                const x = a + i * h;
+                xValues.push(x);
+                yValues.push(func(x));
+                
+                if (i < n) {
+                    trapezoids.push({
+                        x1: x,
+                        y1: 0,
+                        x2: x,
+                        y2: func(x),
+                        x3: x + h,
+                        y3: func(x + h),
+                        x4: x + h,
+                        y4: 0
+                    });
+                }
+            }
+            
+            // Create chart
+            if (trapChart) trapChart.destroy();
+            
+            trapChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: xValues,
+                    datasets: [{
+                        label: 'f(x)',
+                        data: yValues,
+                        borderColor: '#2e7d32',
+                        borderWidth: 2,
+                        fill: false
+                    }, {
+                        label: 'Trapezoids',
+                        data: [],
+                        backgroundColor: 'rgba(255, 111, 0, 0.2)',
+                        borderColor: 'rgba(255, 111, 0, 0)',
+                        borderWidth: 0,
+                        pointRadius: 0,
+                        showLine: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'x',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'f(x)',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                font: {
+                                    size: 14
+                                }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                            titleFont: {
+                                size: 14
+                            },
+                            bodyFont: {
+                                size: 13
+                            },
+                            padding: 10
+                        }
+                    }
+                }
+            });
+            
+            // Draw trapezoids
+            trapezoids.forEach(trap => {
+                const dataset = {
+                    data: [
+                        {x: trap.x1, y: trap.y1},
+                        {x: trap.x2, y: trap.y2},
+                        {x: trap.x3, y: trap.y3},
+                        {x: trap.x4, y: trap.y4},
+                        {x: trap.x1, y: trap.y1}
+                    ],
+                    borderColor: '#ff6f00',
+                    borderWidth: 1,
+                    backgroundColor: 'rgba(255, 111, 0, 0.2)',
+                    fill: true,
+                    pointRadius: 0,
+                    showLine: true
+                };
+                trapChart.data.datasets.push(dataset);
+            });
+            
+            trapChart.update();
+        }
+        
+        // Simpson's 1/3 Rule Calculation
+        function calculateSimpsons() {
+            const funcStr = document.getElementById('simp-function').value;
+            const a = parseFloat(document.getElementById('simp-lower').value);
+            const b = parseFloat(document.getElementById('simp-upper').value);
+            const n = parseInt(document.getElementById('simp-intervals').value);
+            
+            if (n % 2 !== 0) {
+                alert("Number of intervals must be even for Simpson's rule");
+                return;
+            }
+            
+            const func = x => eval(funcStr.replace(/x/g, `(${x})`));
+            const h = (b - a) / n;
+            
+            let sum = func(a) + func(b);
+            let calculation = `Simpson's 1/3 Rule:\n`;
+            calculation += `∫[${a}, ${b}] f(x) dx ≈ (h/3) [f(a) + 4Σf(x_odd) + 2Σf(x_even) + f(b)]\n\n`;
+            calculation += `h = (b - a)/n = (${b} - ${a})/${n} = ${h.toFixed(4)}\n`;
+            calculation += `f(a) = f(${a}) = ${func(a).toFixed(4)}\n`;
+            calculation += `f(b) = f(${b}) = ${func(b).toFixed(4)}\n`;
+            
+            calculation += "\nIntermediate points:\n";
+            for (let i = 1; i < n; i++) {
+                const x = a + i * h;
+                const fx = func(x);
+                
+                if (i % 2 === 1) {
+                    sum += 4 * fx;
+                    calculation += `4 * f(x${i}) = 4 * f(${x.toFixed(4)}) = 4 * ${fx.toFixed(4)} = ${(4*fx).toFixed(4)}\n`;
+                } else {
+                    sum += 2 * fx;
+                    calculation += `2 * f(x${i}) = 2 * f(${x.toFixed(4)}) = 2 * ${fx.toFixed(4)} = ${(2*fx).toFixed(4)}\n`;
+                }
+            }
+            
+            const result = (h / 3) * sum;
+            
+            calculation += `\nSum = f(a) + f(b) + 4Σf(x_odd) + 2Σf(x_even) = ${sum.toFixed(4)}\n`;
+            calculation += `Result = (h/3) * sum = (${h.toFixed(4)}/3) * ${sum.toFixed(4)} = ${result.toFixed(6)}`;
+            
+            document.getElementById('simp-results-content').textContent = calculation;
+            document.getElementById('simp-results-container').style.display = 'block';
+            
+            // Draw graph
+            drawSimpsonsChart(func, a, b, n);
+        }
+
+        function resetSimpsons() {
+            document.getElementById('simp-function').value = "Math.sin(x)";
+            document.getElementById('simp-lower').value = "0";
+            document.getElementById('simp-upper').value = "3.1416";
+            document.getElementById('simp-intervals').value = "6";
+            document.getElementById('simp-results-container').style.display = 'none';
+        }
+
+        // Draw Simpson's Rule chart
+        function drawSimpsonsChart(func, a, b, n) {
+            const ctx = document.getElementById('simp-chart').getContext('2d');
+            const h = (b - a) / n;
+            
+            // Generate data points
+            const xValues = [];
+            const yValues = [];
+            const parabolas = [];
+            
+            for (let i = 0; i <= n; i++) {
+                const x = a + i * h;
+                xValues.push(x);
+                yValues.push(func(x));
+            }
+            
+            // Create chart
+            if (simpChart) simpChart.destroy();
+            
+            simpChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: xValues,
+                    datasets: [{
+                        label: 'f(x)',
+                        data: yValues,
+                        borderColor: '#2e7d32',
+                        borderWidth: 2,
+                        fill: false
+                    }, {
+                        label: 'Parabolic Segments',
+                        data: [],
+                        backgroundColor: 'rgba(255, 111, 0, 0.2)',
+                        borderColor: 'rgba(255, 111, 0, 0)',
+                        borderWidth: 0,
+                        pointRadius: 0,
+                        showLine: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'x',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'f(x)',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                font: {
+                                    size: 14
+                                }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                            titleFont: {
+                                size: 14
+                            },
+                            bodyFont: {
+                                size: 13
+                            },
+                            padding: 10
+                        }
+                    }
+                }
+            });
+            
+            // Draw parabolic segments
+            for (let i = 0; i < n; i += 2) {
+                const x0 = a + i * h;
+                const x1 = a + (i+1) * h;
+                const x2 = a + (i+2) * h;
+                
+                const dataset = {
+                    label: `Segment ${i/2+1}`,
+                    data: [
+                        {x: x0, y: func(x0)},
+                        {x: x1, y: func(x1)},
+                        {x: x2, y: func(x2)}
+                    ],
+                    borderColor: '#ff6f00',
+                    borderWidth: 1,
+                    backgroundColor: 'rgba(255, 111, 0, 0.2)',
+                    fill: true,
+                    pointRadius: 0,
+                    tension: 0.4
+                };
+                simpChart.data.datasets.push(dataset);
+            }
+            
+            simpChart.update();
+        }
+        
+        // Euler's Method Calculation
+        function calculateEuler() {
+            const funcStr = document.getElementById('euler-function').value;
+            const x0 = parseFloat(document.getElementById('euler-initial-x').value);
+            const y0 = parseFloat(document.getElementById('euler-initial-y').value);
+            const h = parseFloat(document.getElementById('euler-step').value);
+            const targetX = parseFloat(document.getElementById('euler-target').value);
+            
+            const func = (x, y) => eval(funcStr.replace(/x/g, `(${x})`).replace(/y/g, `(${y})`));
+            
+            let x = x0;
+            let y = y0;
+            let results = "Euler's Method:\n";
+            results += "y_{n+1} = y_n + h * f(x_n, y_n)\n\n";
+            
+            results += `Step 0: x = ${x.toFixed(4)}, y = ${y.toFixed(4)}\n`;
+            
+            const points = [{x, y}];
+            let step = 1;
+            
+            while (x < targetX) {
+                const slope = func(x, y);
+                y += h * slope;
+                x += h;
+                
+                results += `\nStep ${step}:\n`;
+                results += `f(${x.toFixed(4)}, ${y.toFixed(4)}) = ${slope.toFixed(4)}\n`;
+                results += `y = ${points[points.length-1].y.toFixed(4)} + ${h.toFixed(4)} * ${slope.toFixed(4)} = ${y.toFixed(4)}\n`;
+                results += `x = ${x.toFixed(4)}, y = ${y.toFixed(4)}\n`;
+                
+                points.push({x, y});
+                step++;
+            }
+            
+            results += `\nFinal result at x = ${x.toFixed(4)}: y = ${y.toFixed(6)}`;
+            
+            document.getElementById('euler-results-content').textContent = results;
+            document.getElementById('euler-results-container').style.display = 'block';
+            
+            // Draw graph
+            drawEulerChart(points);
+        }
+
+        function resetEuler() {
+            document.getElementById('euler-function').value = "x + y";
+            document.getElementById('euler-initial-x').value = "0";
+            document.getElementById('euler-initial-y').value = "1";
+            document.getElementById('euler-step').value = "0.1";
+            document.getElementById('euler-target').value = "0.5";
+            document.getElementById('euler-results-container').style.display = 'none';
+        }
+
+        // Draw Euler's Method chart
+        function drawEulerChart(points) {
+            const ctx = document.getElementById('euler-chart').getContext('2d');
+            
+            // Create chart
+            if (eulerChart) eulerChart.destroy();
+            
+            eulerChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    datasets: [{
+                        label: 'Solution Curve',
+                        data: points.map(p => ({x: p.x, y: p.y})),
+                        borderColor: '#2e7d32',
+                        borderWidth: 2,
+                        fill: false,
+                        tension: 0.4
+                    }, {
+                        label: 'Solution Points',
+                        data: points.map(p => ({x: p.x, y: p.y})),
+                        backgroundColor: '#ff6f00',
+                        borderColor: '#ff6f00',
+                        borderWidth: 2,
+                        pointRadius: 6,
+                        pointHoverRadius: 8,
+                        showLine: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            position: 'bottom',
+                            title: {
+                                display: true,
+                                text: 'x',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'y',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                font: {
+                                    size: 14
+                                }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                            titleFont: {
+                                size: 14
+                            },
+                            bodyFont: {
+                                size: 13
+                            },
+                            padding: 10
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Runge-Kutta 4th Order Calculation
+        function calculateRungeKutta() {
+            const funcStr = document.getElementById('rk-function').value;
+            const x0 = parseFloat(document.getElementById('rk-initial-x').value);
+            const y0 = parseFloat(document.getElementById('rk-initial-y').value);
+            const h = parseFloat(document.getElementById('rk-step').value);
+            const targetX = parseFloat(document.getElementById('rk-target').value);
+            
+            const func = (x, y) => eval(funcStr.replace(/x/g, `(${x})`).replace(/y/g, `(${y})`));
+            
+            let x = x0;
+            let y = y0;
+            let results = "Runge-Kutta 4th Order Method:\n";
+            results += "k1 = h * f(x_n, y_n)\n";
+            results += "k2 = h * f(x_n + h/2, y_n + k1/2)\n";
+            results += "k3 = h * f(x_n + h/2, y_n + k2/2)\n";
+            results += "k4 = h * f(x_n + h, y_n + k3)\n";
+            results += "y_{n+1} = y_n + (k1 + 2k2 + 2k3 + k4)/6\n\n";
+            
+            results += `Step 0: x = ${x.toFixed(4)}, y = ${y.toFixed(4)}\n`;
+            
+            const points = [{x, y}];
+            let step = 1;
+            
+            while (x < targetX) {
+                const k1 = h * func(x, y);
+                const k2 = h * func(x + h/2, y + k1/2);
+                const k3 = h * func(x + h/2, y + k2/2);
+                const k4 = h * func(x + h, y + k3);
+                
+                y = y + (k1 + 2*k2 + 2*k3 + k4)/6;
+                x += h;
+                
+                results += `\nStep ${step}:\n`;
+                results += `k1 = ${h.toFixed(4)} * f(${x.toFixed(4)}, ${y.toFixed(4)}) = ${k1.toFixed(6)}\n`;
+                results += `k2 = ${h.toFixed(4)} * f(${(x+h/2).toFixed(4)}, ${(y+k1/2).toFixed(4)}) = ${k2.toFixed(6)}\n`;
+                results += `k3 = ${h.toFixed(4)} * f(${(x+h/2).toFixed(4)}, ${(y+k2/2).toFixed(4)}) = ${k3.toFixed(6)}\n`;
+                results += `k4 = ${h.toFixed(4)} * f(${(x+h).toFixed(4)}, ${(y+k3).toFixed(4)}) = ${k4.toFixed(6)}\n`;
+                results += `y = ${points[points.length-1].y.toFixed(4)} + (${k1.toFixed(4)} + 2*${k2.toFixed(4)} + 2*${k3.toFixed(4)} + ${k4.toFixed(4)})/6 = ${y.toFixed(6)}\n`;
+                results += `x = ${x.toFixed(4)}, y = ${y.toFixed(6)}\n`;
+                
+                points.push({x, y});
+                step++;
+            }
+            
+            results += `\nFinal result at x = ${x.toFixed(4)}: y = ${y.toFixed(6)}`;
+            
+            document.getElementById('rk-results-content').textContent = results;
+            document.getElementById('rk-results-container').style.display = 'block';
+            
+            // Draw graph
+            drawRungeKuttaChart(points);
+        }
+
+        function resetRungeKutta() {
+            document.getElementById('rk-function').value = "x + y";
+            document.getElementById('rk-initial-x').value = "0";
+            document.getElementById('rk-initial-y').value = "1";
+            document.getElementById('rk-step').value = "0.1";
+            document.getElementById('rk-target').value = "0.5";
+            document.getElementById('rk-results-container').style.display = 'none';
+        }
+
+        // Draw Runge-Kutta chart
+        function drawRungeKuttaChart(points) {
+            const ctx = document.getElementById('rk-chart').getContext('2d');
+            
+            // Create chart
+            if (rkChart) rkChart.destroy();
+            
+            rkChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    datasets: [{
+                        label: 'Solution Curve',
+                        data: points.map(p => ({x: p.x, y: p.y})),
+                        borderColor: '#2e7d32',
+                        borderWidth: 2,
+                        fill: false,
+                        tension: 0.4
+                    }, {
+                        label: 'Solution Points',
+                        data: points.map(p => ({x: p.x, y: p.y})),
+                        backgroundColor: '#ff6f00',
+                        borderColor: '#ff6f00',
+                        borderWidth: 2,
+                        pointRadius: 6,
+                        pointHoverRadius: 8,
+                        showLine: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            position: 'bottom',
+                            title: {
+                                display: true,
+                                text: 'x',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'y',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                font: {
+                                    size: 14
+                                }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                            titleFont: {
+                                size: 14
+                            },
+                            bodyFont: {
+                                size: 13
+                            },
+                            padding: 10
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Power Method Calculation
+        function calculatePowerMethod() {
+            const size = parseInt(document.getElementById('pm-size').value);
+            const inputs = document.querySelectorAll('#pm-matrix-container input');
+            const initialVectorStr = document.getElementById('pm-initial').value;
+            const tolerance = parseFloat(document.getElementById('pm-tolerance').value);
+            const maxIter = parseInt(document.getElementById('pm-max-iter').value);
+            
+            // Parse matrix
+            const A = [];
+            for (let i = 0; i < size; i++) {
+                A[i] = [];
+                for (let j = 0; j < size; j++) {
+                    A[i][j] = 0;
+                }
+            }
+            
+            inputs.forEach(input => {
+                const row = parseInt(input.dataset.row);
+                const col = parseInt(input.dataset.col);
+                A[row][col] = parseFloat(input.value) || 0;
+            });
+            
+            // Parse initial vector
+            let X = initialVectorStr.split(',').map(Number);
+            if (X.length !== size) {
+                alert(`Initial vector must have ${size} elements`);
+                return;
+            }
+            
+            let results = "Power Method for Dominant Eigenvalue:\n\n";
+            results += "Initial Vector: [" + X.map(x => x.toFixed(4)).join(', ') + "]\n";
+            results += "Tolerance: " + tolerance + "\n";
+            results += "Max Iterations: " + maxIter + "\n\n";
+            
+            let converged = false;
+            let eigenvalue = 0;
+            let iter = 0;
+            
+            while (!converged && iter < maxIter) {
+                iter++;
+                
+                // Multiply matrix and vector
+                const Y = new Array(size).fill(0);
+                for (let i = 0; i < size; i++) {
+                    for (let j = 0; j < size; j++) {
+                        Y[i] += A[i][j] * X[j];
+                    }
+                }
+                
+                // Find the element with max absolute value
+                let maxVal = Math.abs(Y[0]);
+                let maxIndex = 0;
+                for (let i = 1; i < size; i++) {
+                    if (Math.abs(Y[i]) > maxVal) {
+                        maxVal = Math.abs(Y[i]);
+                        maxIndex = i;
+                    }
+                }
+                
+                const newEigenvalue = Y[maxIndex];
+                
+                // Normalize the vector
+                X = Y.map(val => val / newEigenvalue);
+                
+                // Calculate error
+                const error = Math.abs(newEigenvalue - eigenvalue);
+                eigenvalue = newEigenvalue;
+                
+                results += `Iteration ${iter}:\n`;
+                results += `  A * X = [${Y.map(val => val.toFixed(4)).join(', ')}]\n`;
+                results += `  Dominant Element: ${newEigenvalue.toFixed(6)}\n`;
+                results += `  Normalized Eigenvector: [${X.map(val => val.toFixed(6)).join(', ')}]\n`;
+                results += `  Eigenvalue: ${eigenvalue.toFixed(6)}\n`;
+                results += `  Error: ${error.toFixed(6)}\n\n`;
+                
+                if (error < tolerance) {
+                    converged = true;
+                    results += `Converged after ${iter} iterations.\n`;
+                }
+            }
+            
+            results += `\nDominant Eigenvalue: ${eigenvalue.toFixed(6)}\n`;
+            results += `Corresponding Eigenvector: [${X.map(val => val.toFixed(6)).join(', ')}]\n`;
+            
+            document.getElementById('pm-results-content').textContent = results;
+            document.getElementById('pm-results-container').style.display = 'block';
+        }
+
+        function resetPowerMethod() {
+            createMatrixInput('pm');
+            document.getElementById('pm-initial').value = "1,1,1";
+            document.getElementById('pm-tolerance').value = "0.0001";
+            document.getElementById('pm-max-iter').value = "20";
+            document.getElementById('pm-results-container').style.display = 'none';
+        }
+        
+        // Initialize matrix for Gauss Seidel on page load
+        window.onload = function() {
+            createMatrixInput('gs');
+        };
+    </script>
+</body>
+</html>
