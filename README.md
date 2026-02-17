@@ -138,8 +138,6 @@ numerical_method_web_calculator/
 Method 1: Direct Download
 Clone the repository:
 
-bash
-Copy code
 git clone https://github.com/Koushik07-c/numerical_method_web_calculator.git
 Open the project folder.
 
